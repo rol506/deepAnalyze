@@ -217,5 +217,7 @@ def processPair(first, second):
     if img is None:
         logging.error("Result image is None! Exporting first image...")
         e.exportImage(e.loadImage(first), "result.jpg")
+    else:
+        e.exportImage(img, "result.jpg")
     end = time.time()
     print(f"Process took {round(end-start, 2)}s")
