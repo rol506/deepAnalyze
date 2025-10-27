@@ -41,15 +41,16 @@ form {
 div.upload {
   /*border: 1px solid black;*/
   height: 47px;
-  width: 150px;
+  width: 200px;
   background: #EAE5D4;
   text-align: center;
   border-radius: 16px;
   position: relative;
+  padding: 10px;
 }
 
 div.upload:before {
-  content: "Upload";
+  /*content: "Upload";*/
   width: 100%;
   white-space: pre;
   top: 50%;
@@ -70,8 +71,8 @@ div.uploadWrapper {
 
 input[type="file"] {
   height: 47px;
-  width: 150px;
-  opacity: 0;
+  width: 200px;
+  opacity: 1;
 }
 
 input[type="submit"] {
