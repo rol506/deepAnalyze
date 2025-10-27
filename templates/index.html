@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+    {{super()}}
+    <header></header>
+    <main>
+      <div class="wrapper">
+        <h1>Город в деталях: цифровая экспертиза</h1>
+        <h5>Детальное сравнение изображений и выявление отличий цвета, текста, формы и размера</h4>
+
+        <form action="/" method="post" enctype="multipart/form-data">
+          <div class="uploadWrapper">
+            <div class="upload">
+              <input type="file" name="first" required id="first">
+            </div>
+          </div>
+          <input type="submit" value="Сравнить">
+          <div class="uploadWrapper">
+            <div class="upload">
+              <input type="file" name="second" required id="second">
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+    {% endblock %}
+  </body>
+</html>
