@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+    {{super()}}
+    <header></header>
+    <main>
+      <div class="wrapper" style="text-align: center; display: flex; flex-direction: column; justify-content:center;align-items: center;">
+        <p style="font-size: 5rem; font-weight: bolder; color: #403D39;">ОШИБКА 404</p>
+        <p style="font-size: 1.2rem; font-weight: bolder; color: #B7AFA2;">Страница не найдена, проверьте правильность адреса.</p>
+        <p style="font-size: 1.2rem; font-weight: bolder; color: #B7AFA2;">Вы можете вернуться <a class="anim" href="/">на главную</a>.</p>
+      </div>
+    </main>
+    {% endblock %}
+  </body>
+</html>

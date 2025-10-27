@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block head %}
+    {{super()}}
+    {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+    {{super()}}
+    <header></header>
+    <main>
+      <div class="wrapper">
+        <div class="container">
+          <h1 style="width: unset; margin: unset;">Результат:</h1>
+
+          <div class="docview">
+            <a href="/resultDoc" class="doc">
+              <div class="doc"><img src="{{url_for('static', filename='images/document.png')}}" align="left" width="50px" height="50px" style="margin: 20px">
+                SUMMARY.DOCX
+              </div>
+            </a>
+            <a href="/resultImg" class="doc">
+              <div class="doc"><img src="{{url_for('static', filename='images/document.png')}}" align="left" width="50px" height="50px" style="margin: 20px">
+                RESULT.JPG
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+    {% endblock %}
+  </body>
+</html>
