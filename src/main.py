@@ -16,6 +16,8 @@ app.config["DEBUG"] = DEBUG
 app.config["UPLOAD_PATH"] = "upload/"
 app.template_folder = "../templates/"
 app.static_folder = "../static/"
+if not os.path.exists(app.config["UPLOAD_PATH"]):
+    os.mkdir(app.config["UPLOAD_PATH"])
 
 @app.route("/", methods=["POST", "GET"])
 @app.route("/home", methods=["POST", "GET"])
