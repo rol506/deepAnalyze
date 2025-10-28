@@ -29,8 +29,10 @@
                 <div class="upload">
                   <div id="labelsFirst">
                     <label for="first"><img src="{{url_for('static', filename='images/upload.png')}}" width="100px" height="100px"></label>
+                    <label for="first" style="font-size: 1.25rem; font-weight: bolder;">Оригинальное изображение</label>
                     <label for="first" style="font-size: 1.25rem; font-weight: bolder;">Выберите или перетащите сюда изображение</label>
                     <label for="first" style="font-size: 1.25rem; font-weight: bolder;">(.png, .jpg)</label>
+                    <label for="first" id="invalidFirst" style="font-size: 1.3rem; font-weight: bolder;"><br><br>Выбран не тот формат файла</label>
                   </div>
                   <input type="file" name="first" required accept="image/png,image/jpeg" id="first">
                   <img src="" id="previewFirst" class="disabled">
@@ -40,8 +42,10 @@
                 <div class="upload">
                   <div id="labelsSecond" disabled>
                     <label for="second"><img src="{{url_for('static', filename='images/upload.png')}}" width="100px" height="100px"></label>
+                    <label for="second" style="font-size: 1.25rem; font-weight: bolder;">Изображение для сравнения</label>
                     <label for="second" style="font-size: 1.25rem; font-weight: bolder;">Выберите или перетащите сюда изображение</label>
                     <label for="second" style="font-size: 1.25rem; font-weight: bolder;">(.png, .jpg)</label>
+                    <label for="second" id="invalidSecond" style="font-size: 1.3rem; font-weight: bolder;"><br><br>Выбран не тот формат файла</label>
                   </div>
                   <input type="file" name="second" required accept="image/png,image/jpeg" id="second">
                   <img src="" id="previewSecond" class="disabled">
@@ -55,8 +59,8 @@
     </main>
     <script>
 
-      var firstFile = null;
-      var secondFile = null;
+      let firstFile = null;
+      let secondFile = null;
 
       const first = document.getElementById("uploadFirst");
       const second = document.getElementById("uploadSecond");
@@ -71,14 +75,23 @@
       const btn = document.getElementById("uploadBtn");
       const form = document.getElementById("form");
       const loader = document.getElementById("loader");
+      const invalidFirst = document.getElementById("invalidFirst");
+      const invalidSecond = document.getElementById("invalidSecond");
 
       function clear() {
         form.reset();
       }
 
-      function addFirstFile(text)
+      function addFirstFile(file)
       {
-        firstFile = text;
+        firstFile = file;
+        if (file.type != "image/png" && file.type != "image/jpeg")
+        {
+          invalidFirst.style.display = "block";
+          uploadBtn.setAttribute("disabled", "");
+          return;
+        }
+
         if (firstFile != null && secondFile != null)
         {
           uploadBtn.removeAttribute("disabled");
@@ -87,9 +100,16 @@
         }
       }
 
-      function addSecondFile(text)
+      function addSecondFile(file)
       {
-        secondFile = text;
+        secondFile = file;
+        if (file.type != "image/png" && file.type != "image/jpeg")
+        {
+          invalidSecond.style.display = "block";
+          uploadBtn.setAttribute("disabled", "");
+          return;
+        }
+
         if (firstFile != null && secondFile != null)
         {
           uploadBtn.removeAttribute("disabled");
@@ -104,11 +124,13 @@
         {
           if (ev.currentTarget.getAttribute("id") == "uploadFirst")
           {
-            it.getAsFile().text().then((txt) => addFirstFile(txt));
-            updatePreviewFirst(it.getAsFile());
+            var f = it.getAsFile()
+            addFirstFile(f);
+            updatePreviewFirst(f);
           } else {
-            it.getAsFile().text().then((txt) => addSecondFile(txt));
-            updatePreviewSecond(it.getAsFile());
+            var f = it.getAsFile()
+            addSecondFile(f);
+            updatePreviewSecond(f);
           }
         }
       }
@@ -119,10 +141,10 @@
         {
           if (ev.currentTarget.getAttribute("id") == "uploadFirst")
           {
-            it.text().then((txt) => addFirstFile(txt));
+            addFirstFile(it);
             updatePreviewFirst(it);
           } else {
-            it.text().then((txt) => addSecondFile(txt));
+            addSecondFile(it);
             updatePreviewSecond(it);
           }
         }
@@ -130,11 +152,11 @@
 
       function updatePreviewFirst(file)
       {
-        /*if (firstFile != null)
+        if (file.type != "image/png" && file.type != "image/jpeg")
         {
           previewFirst.classList.add("disabled");
           labelsFirst.classList.remove("disabled");
-        } else */{ 
+        } else { 
           let reader = new FileReader();
           reader.readAsDataURL(file);
 
@@ -149,11 +171,11 @@
 
       function updatePreviewSecond(file)
       {
-        /*if (secondFile != null)
+        if (file.type != "image/png" && file.type != "image/jpeg")
         {
           previewSecond.classList.add("disabled");
           labelsSecond.classList.remove("disabled");
-        } else */{ 
+        } else { 
           let reader = new FileReader();
           reader.readAsDataURL(file);
 
@@ -166,9 +188,28 @@
         }
       }
 
-      function loadHandler()
+      function loadHandler(ev)
       {
+        ev.preventDefault();
+
+        let formData = new FormData();
+        formData.append("first", firstFile, firstFile.name);
+        formData.append("second", secondFile, secondFile.name);
+
         loader.style.display = "flex";
+        let xhr = new XMLHttpRequest(); 
+        xhr.open("POST", "/index");
+        xhr.send(formData);
+        xhr.onload = function() {
+          if (xhr.status != 200)
+          {
+            alert("Ошибка! Статус " + xhr.status);
+            loader.style.display = "none";
+          } else {
+            loader.style.display = "none";
+            window.location.href = "/result";
+          }
+        }
       }
 
       // clear form data
@@ -180,6 +221,8 @@
       second.addEventListener("change", uploadHandler);
       uploadBtn.addEventListener("click", loadHandler);
       uploadBtn.setAttribute("disabled", "");
+      invalidFirst.style.display = "none";
+      invalidSecond.style.display = "none";
 
       // reload page on browser back
       window.addEventListener( "pageshow", function ( event ) {

@@ -13,6 +13,7 @@ logging.basicConfig(encoding="utf-8", level=logging.INFO,
 
 app = Flask(__name__)
 app.config["DEBUG"] = DEBUG
+app.config["UPLOAD_PATH"] = "upload/"
 app.template_folder = "../templates/"
 app.static_folder = "../static/"
 
@@ -21,12 +22,18 @@ app.static_folder = "../static/"
 @app.route("/index", methods=["POST", "GET"])
 def index():
     if request.method == "POST":
-        request.files["first"].save("first.jpg")
-        request.files["second"].save("second.jpg")
+        first = request.files["first"]
+        second = request.files["second"]
 
-        processPair("first.jpg", "second.jpg")
-        os.remove("first.jpg")
-        os.remove("second.jpg")
+        firstPath = os.path.join(app.config["UPLOAD_PATH"], first.filename)
+        secondPath = os.path.join(app.config["UPLOAD_PATH"], second.filename)
+
+        first.save(firstPath)
+        second.save(secondPath)
+
+        processPair(firstPath, secondPath)
+        os.remove(firstPath)
+        os.remove(secondPath)
 
         return redirect("/result")
     return render_template("index.html")

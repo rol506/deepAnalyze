@@ -11,9 +11,12 @@
     {{super()}}
     <header></header>
     <main>
-      <div class="wrapper">
+      <div class="wrapper" style="display: flex; flex-direction: row; justify-content: space-evenly;">
+        <div class="docPreview">
+          <img src="/resultImg1" onclick="downloadURL('/resultImg1')">
+        </div>
         <div class="container">
-          <h1 style="width: unset; margin: unset;">Результат:</h1>
+          <p style="width: unset; margin: 20px; font-size: 3rem; font-weight: bolder;">Результат:</p>
 
           <div class="docview">
             <a href="/resultDoc" class="doc">
@@ -32,11 +35,52 @@
               </div>
             </a>
 
-            <a href="/index" class="return"><button>Главная</button></a>
+            <button class="download" onclick="downloadAll()">Скачать</button>
           </div>
+          <a href="/index" class="anim" style="font-weight: bolder;position: absolute; left: 60px; top: 85vh; font-size: 1.5rem;">Вернуться на главную</a>
+        </div>
+        <div class="docPreview">
+          <img src="/resultImg2" onclick="downloadURL('/resultImg2')">
         </div>
       </div>
     </main>
+
+    <script>
+      var links = [
+        "/resultDoc",
+        "/resultImg1",
+        "/resultImg2"
+      ]
+
+      function downloadURL(url)
+      { 
+        var link = document.createElement("a");
+        link.setAttribute("download", null);
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.setAttribute('href', url);
+        link.click();
+        document.body.removeChild(link); 
+      }
+
+      function downloadAll()
+      {
+        var urls = links;
+        var link = document.createElement("a");
+        link.setAttribute("download", null);
+        link.style.display = "none";
+
+        document.body.appendChild(link);
+
+        for (var i = 0; i < urls.length; i++)
+        {
+          link.setAttribute('href', urls[i]);
+          link.click();
+        }
+
+        document.body.removeChild(link);
+      }
+    </script>
     {% endblock %}
   </body>
 </html>
