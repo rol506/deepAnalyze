@@ -114,7 +114,7 @@ class Engine:
         cpy = copy.deepcopy(image)
         self.__log.debug("Grayscaling image")
         img = cv.cvtColor(cpy, cv.COLOR_BGR2GRAY)
-        ret, img = cv.threshold(img, 10, 255, cv.THRESH_OTSU)
+        ret, img = cv.threshold(img, 0, 255, cv.THRESH_OTSU)
 
         # sobel magnitude
         #sx = cv.Sobel(img, cv.CV_32F, 1, 0)
