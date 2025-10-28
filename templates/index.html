@@ -12,8 +12,8 @@
     <div class="cover" id="loader">
       <div class="loader">
         <div class="spin"></div>
-        <p style="font-weight: bolder; font-size: 2rem; color: #403D39;">Подождите</p>
-        <p style="font-weight: bolder; font-size: 1rem; color: #403D39;">Идёт загрузка</p>
+        <p style="font-weight: bolder; font-size: 2rem; color: #403D39; margin-top: 40px">ИДЁТ ЗАГРУЗКА</p>
+        <p style="font-weight: bolder; font-size: 1rem; color: #403D39;">ПОДОЖДИТЕ</p>
       </div>
     </div>
     <header></header>
@@ -28,10 +28,10 @@
               <div class="uploadWrapper" id="uploadFirst">
                 <div class="upload">
                   <div id="labelsFirst">
+                    <label for="first" style="font-size: 1.25rem; font-weight: bolder; margin: 20px">Оригинальное изображение</label>
                     <label for="first"><img src="{{url_for('static', filename='images/upload.png')}}" width="100px" height="100px"></label>
-                    <label for="first" style="font-size: 1.25rem; font-weight: bolder;">Оригинальное изображение</label>
                     <label for="first" style="font-size: 1.25rem; font-weight: bolder;">Выберите или перетащите сюда изображение</label>
-                    <label for="first" style="font-size: 1.25rem; font-weight: bolder;">(.png, .jpg)</label>
+                    <label for="first" style="font-size: 1.25rem; font-weight: bolder; color: #B7AFA2;">(.png, .jpg)</label>
                     <label for="first" id="invalidFirst" style="font-size: 1.3rem; font-weight: bolder;"><br><br>Выбран не тот формат файла</label>
                   </div>
                   <input type="file" name="first" required accept="image/png,image/jpeg" id="first">
@@ -44,10 +44,10 @@
               <div class="uploadWrapper" id="uploadSecond">
                 <div class="upload">
                   <div id="labelsSecond" disabled>
+                    <label for="second" style="font-size: 1.25rem; font-weight: bolder; margin: 20px">Изображение для сравнения</label>
                     <label for="second"><img src="{{url_for('static', filename='images/upload.png')}}" width="100px" height="100px"></label>
-                    <label for="second" style="font-size: 1.25rem; font-weight: bolder;">Изображение для сравнения</label>
                     <label for="second" style="font-size: 1.25rem; font-weight: bolder;">Выберите или перетащите сюда изображение</label>
-                    <label for="second" style="font-size: 1.25rem; font-weight: bolder;">(.png, .jpg)</label>
+                    <label for="second" style="font-size: 1.25rem; font-weight: bolder; color: #B7AFA2;">(.png, .jpg)</label>
                     <label for="second" id="invalidSecond" style="font-size: 1.3rem; font-weight: bolder;"><br><br>Выбран не тот формат файла</label>
                   </div>
                   <input type="file" name="second" required accept="image/png,image/jpeg" id="second">

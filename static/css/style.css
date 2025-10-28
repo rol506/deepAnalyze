@@ -143,7 +143,7 @@ button.download {
   height: 70px;
   border-radius: 8px;
   transition: 0.2s ease-out all;
-  margin: 20px;
+  margin: 150px 20px;
 }
 
 button.download:hover {
@@ -234,6 +234,8 @@ div.doc {
   font-size: 1.5rem;
   color: #403D39;
   transition: 0.2s ease-out all;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
 }
 
 div.doc:hover {
