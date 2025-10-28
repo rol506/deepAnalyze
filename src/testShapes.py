@@ -208,12 +208,14 @@ def processTiles(firstTiles, secondTiles, e, doc):
                     run.add_picture("tmp.jpg", width=Inches(2))
                     os.remove("tmp.jpg")
 
-            e.drawContours(img1, df[0], thickness=2, color=(0,0,255))
-            e.drawContours(img2, df[1], thickness=2, color=(0,0,255))
+            if df is not None:
+                e.drawContours(img1, df[0], thickness=2, color=(0,0,255))
+                e.drawContours(img2, df[1], thickness=2, color=(0,0,255))
 
-            for d in diff:
-                e.drawContours(img1, [d[0][0]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][0])))
-                e.drawContours(img2, [d[0][1]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][1])))
+            if diff is not None:
+                for d in diff:
+                    e.drawContours(img1, [d[0][0]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][0])))
+                    e.drawContours(img2, [d[0][1]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][1])))
 
             e.exportImage(img1, tile1)
             e.exportImage(img2, tile2)
