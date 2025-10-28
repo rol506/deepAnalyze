@@ -108,7 +108,7 @@
             updatePreviewFirst(it.getAsFile());
           } else {
             it.getAsFile().text().then((txt) => addSecondFile(txt));
-            updatePreviewSecond(it);
+            updatePreviewSecond(it.getAsFile());
           }
         }
       }

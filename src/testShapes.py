@@ -163,7 +163,6 @@ def processTiles(firstTiles, secondTiles, e, doc):
                 logging.debug("Found difference in colors!")
                 for d in diff:
 
-                    print(d)
                     r = copy.deepcopy(img1)
                     r2 = copy.deepcopy(img2)
 
