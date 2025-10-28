@@ -7,9 +7,9 @@ import sys
 
 DEBUG = True
 
-logging.basicConfig(encoding="utf-8", level=logging.DEBUG, 
-                    format="%(levelname)s %(asctime)s %(message)s",
-                    handlers=[logging.FileHandler("log.txt", ("w" if DEBUG else "w+")), logging.StreamHandler(sys.stdout)])
+#logging.basicConfig(encoding="utf-8", level=logging.INFO, 
+#                    format="%(levelname)s %(asctime)s %(message)s",
+#                    handlers=[logging.FileHandler("log.txt", ("w" if DEBUG else "w+")), logging.StreamHandler(sys.stdout)])
 
 app = Flask(__name__)
 app.config["DEBUG"] = DEBUG

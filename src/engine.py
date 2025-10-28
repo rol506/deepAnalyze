@@ -15,35 +15,35 @@ class Engine:
         return (width, height)
 
     def genBlankImage(self, width, height):
-        self.__log.info(f"Generating {width}x{height} blank image")
+        self.__log.debug(f"Generating {width}x{height} blank image")
         image = np.zeros((height, width,3), np.uint8)
-        #self.__log.info("Blank image generated!")
+        #self.__log.debug("Blank image generated!")
         return image
 
     def genMask(self, image, contour):
         width, height, channels = image.shape
-        #self.__log.info(f"Generating {width}x{height} image mask")
+        #self.__log.debug(f"Generating {width}x{height} image mask")
         mask = np.zeros(image.shape[:2], np.uint8)
         cv.drawContours(mask, [contour], -1, 255, -1)
         return mask
 
     def exportImage(self, image, filename):
-        self.__log.info(f"Exporting image as '{filename}'")
-        if os.path.exists(filename):
-            self.__log.warning(f"'{filename}' already exists! It will be overwritten!")
+        self.__log.debug(f"Exporting image as '{filename}'")
+        #if os.path.exists(filename):
+            #self.__log.warning(f"'{filename}' already exists! It will be overwritten!")
         width, height = self.getImageSize(image)
         self.__log.debug(f"Writing {width}x{height} image")
         cv.imwrite(filename, image)
-        #self.__log.info(f"Image exported successfully!")
+        #self.__log.debug(f"Image exported successfully!")
 
     # returns None in case of an error
     def loadImage(self, filename):
-        self.__log.info(f"Loading image '{filename}'")
+        self.__log.debug(f"Loading image '{filename}'")
         if not os.path.exists(filename):
             self.__log.error(f"File does not exist!")
             return None
         img = cv.imread(filename)
-        #self.__log.info(f"Image loaded successfully!")
+        #self.__log.debug(f"Image loaded successfully!")
         return img
 
     def viewImage(self, image):
@@ -68,7 +68,7 @@ class Engine:
 
     # cropps image and changes contours. Returns (image, contours)
     def cropToContour(self, image, contour):
-        self.__log.info("Cropping image to contour")
+        self.__log.debug("Cropping image to contour")
         width, height, channels = image.shape
         x, y, w, h = cv.boundingRect(contour)
         x2 = x+w
@@ -95,7 +95,7 @@ class Engine:
 
     def grayscaleImage(self, image, invert=False):
         cpy = copy.deepcopy(image)
-        self.__log.info("Grayscaling image")
+        self.__log.debug("Grayscaling image")
         img = cv.cvtColor(cpy, cv.COLOR_BGR2GRAY)
         ret, img = cv.threshold(img, 0, 255, cv.THRESH_OTSU)
 
@@ -110,16 +110,16 @@ class Engine:
         return img
 
     def findContours(self, image, limit=-1):
-        self.__log.info("Finding contours")
+        self.__log.debug("Finding contours")
         contours, hierarchy = cv.findContours(image, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE)
-        #self.__log.info("Contours found!")
-        self.__log.info(f"Found {len(contours)} contours")
+        #self.__log.debug("Contours found!")
+        self.__log.debug(f"Found {len(contours)} contours")
         if len(contours) > limit and limit > 0:
             return contours[:limit]
         return contours
 
     def drawContours(self, image, contours, color=(0,0,255), thickness=2, drawBoundingBox=False):
-        self.__log.info("Drawing contours")
+        self.__log.debug("Drawing contours")
         if drawBoundingBox:
             for i in contours:
                 x, y, w, h = cv.boundingRect(i)
@@ -128,23 +128,23 @@ class Engine:
             cv.drawContours(image, contours, -1, color,thickness=thickness)
 
     def drawDot(self, image, position):
-        self.__log.info("Drawing a dot on the image")
+        self.__log.debug("Drawing a dot on the image")
         cv.circle(image, position, 3, (0,255,0), -1)
         return image
 
     # returns None in case of an error
     def horizontalCombine(self, image1, image2):
-        self.__log.info("Combining two images horizontally")
+        self.__log.debug("Combining two images horizontally")
         if (image1.shape != image2.shape):
             self.__log.error("Two images must have same size and depth!")
             return None
         res = np.concatenate((image1, image2), axis=1)
-        #self.__log.info("Combined two images horizontally!")
+        #self.__log.debug("Combined two images horizontally!")
         return res
 
     # returns [[first contours array], [second contours array]] or None if contours are equal
     def findDiffShapes(self, contours, contours2):
-        self.__log.info("Searching for difference in shapes")
+        self.__log.debug("Searching for difference in shapes")
         diff = [[], []]
         for i, j in zip(contours, contours2):
             if self.findDiffVertices(i, j) is not None:
@@ -154,7 +154,7 @@ class Engine:
 
     # returns indices of the different vertices or if contours are equal
     def findDiffVertices(self, cont1, cont2):
-        self.__log.info("Searching for difference in vertices")
+        self.__log.debug("Searching for difference in vertices")
         indices = []
         for index, it in enumerate(zip(cont1, cont2)):
             if not (it[0] == it[1]).all():
@@ -162,7 +162,7 @@ class Engine:
         return indices if len(indices) > 1 else None
 
     def getColor(self, image, contour):
-        #self.__log.info("Getting mean color of an area")
+        #self.__log.debug("Getting mean color of an area")
         mask = self.genMask(image, contour)
         clr = cv.mean(image, mask=mask)
         cpy = list(copy.deepcopy(clr))
@@ -172,12 +172,11 @@ class Engine:
 
     # returns [((first contour, second contour) (first color, second color))]
     def findDiffColors(self, image1, image2, contours1, contours2):
-        self.__log.info("Searching for difference in colors")
+        self.__log.debug("Searching for difference in colors")
         res = []
         for i, j in zip(contours1, contours2):
             c1 = self.getColor(image1, i)
             c2 = self.getColor(image2, j)
-            print(c1, c2)
             if c1 != c2:
                 res.append(((i, j), (c1, c2)))
         return res if len(res) > 1 else None

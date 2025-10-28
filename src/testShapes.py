@@ -11,7 +11,7 @@ from docx.shared import Inches
 
 DEBUG = True
 
-logging.basicConfig(encoding="utf-8", level=logging.DEBUG, 
+logging.basicConfig(encoding="utf-8", level=logging.INFO, 
                     format="%(levelname)s %(asctime)s %(message)s",
                     handlers=[logging.FileHandler("log.txt", ("w" if DEBUG else "w+")), logging.StreamHandler(sys.stdout)])
 
@@ -148,9 +148,9 @@ def processTiles(firstTiles, secondTiles, e, doc):
             # COLOR DIFF
             diff = e.findDiffColors(img1, img2, cont1, cont2)
             if diff is None:
-                logging.info("No difference in colors found")
+                logging.debug("No difference in colors found")
             else:
-                logging.info("Found difference in colors!")
+                logging.debug("Found difference in colors!")
                 for d in diff:
                     #e.drawContours(r, d[0][0], color=d[1][1])
                     #e.drawContours(r2, d[0][1], color=d[1][0])
@@ -167,10 +167,10 @@ def processTiles(firstTiles, secondTiles, e, doc):
             # SHAPE DIFF
             df = e.findDiffShapes(cont1, cont2)
             if df is None:
-                logging.info("No difference in shapes found")
+                logging.debug("No difference in shapes found")
                 return None
             else:
-                logging.info("Found difference in shapes!")
+                logging.debug("Found difference in shapes!")
                 e.drawContours(r, df[0], thickness=-1, color=(0,0,255)) # draw diff contours from other img
                 e.drawContours(r2, df[1], thickness=-1, color=(0,0,255))
                 for c1, c2 in zip(df[0], df[1]):
@@ -206,6 +206,7 @@ def processTiles(firstTiles, secondTiles, e, doc):
     return img
 
 def processPair(first, second):
+    logging.info("Processing pair")
     e = Engine()
     doc = Document()
 
@@ -220,4 +221,4 @@ def processPair(first, second):
     else:
         e.exportImage(img, "result.jpg")
     end = time.time()
-    print(f"Process took {round(end-start, 2)}s")
+    logging.info(f"Process took {round(end-start, 2)}s")

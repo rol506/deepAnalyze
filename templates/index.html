@@ -31,8 +31,8 @@
                     <label for="first"><img src="{{url_for('static', filename='images/upload.png')}}" width="100px" height="100px"></label>
                     <label for="first" style="font-size: 1.25rem; font-weight: bolder;">Выберите или перетащите сюда изображение</label>
                     <label for="first" style="font-size: 1.25rem; font-weight: bolder;">(.png, .jpg)</label>
-                    <input type="file" name="first" required accept="image/png,image/jpeg" id="first">
                   </div>
+                  <input type="file" name="first" required accept="image/png,image/jpeg" id="first">
                   <img src="" id="previewFirst" class="disabled">
                 </div>
               </div>
@@ -42,8 +42,8 @@
                     <label for="second"><img src="{{url_for('static', filename='images/upload.png')}}" width="100px" height="100px"></label>
                     <label for="second" style="font-size: 1.25rem; font-weight: bolder;">Выберите или перетащите сюда изображение</label>
                     <label for="second" style="font-size: 1.25rem; font-weight: bolder;">(.png, .jpg)</label>
-                    <input type="file" name="second" required accept="image/png,image/jpeg" id="second">
                   </div>
+                  <input type="file" name="second" required accept="image/png,image/jpeg" id="second">
                   <img src="" id="previewSecond" class="disabled">
                 </div>
               </div>
@@ -130,11 +130,11 @@
 
       function updatePreviewFirst(file)
       {
-        if (firstFile != null)
+        /*if (firstFile != null)
         {
           previewFirst.classList.add("disabled");
           labelsFirst.classList.remove("disabled");
-        } else { 
+        } else */{ 
           let reader = new FileReader();
           reader.readAsDataURL(file);
 
@@ -149,11 +149,11 @@
 
       function updatePreviewSecond(file)
       {
-        if (secondFile != null)
+        /*if (secondFile != null)
         {
           previewSecond.classList.add("disabled");
           labelsSecond.classList.remove("disabled");
-        } else { 
+        } else */{ 
           let reader = new FileReader();
           reader.readAsDataURL(file);
 
@@ -180,6 +180,17 @@
       second.addEventListener("change", uploadHandler);
       uploadBtn.addEventListener("click", loadHandler);
       uploadBtn.setAttribute("disabled", "");
+
+      // reload page on browser back
+      window.addEventListener( "pageshow", function ( event ) {
+        var historyTraversal = event.persisted || 
+          ( typeof window.performance != "undefined" && 
+            window.performance.navigation.type === 2 );
+        if ( historyTraversal ) {
+          // Handle page restore.
+          window.location.reload();
+        }
+      });
     </script>
     {% endblock %}
   </body>
