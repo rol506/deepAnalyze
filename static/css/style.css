@@ -64,8 +64,8 @@ div.fileSelection {
 
 div.upload {
   /*border: 1px solid black;*/
-  width: 540px;
-  height: 390px;
+  width: 530px;
+  height: 380px;
   border: 2px solid #EAE5D4;
   background: #FFFCF2;
   text-align: center;
@@ -162,8 +162,8 @@ div.docview {
 
 #previewFirst, #previewSecond {
   display: block;
-  width: 540px;
-  height: 390px;
+  width: 530px;
+  height: 380px;
   border-radius: 16px;
   border: 2px solid #EAE5D4;
   object-fit: cover;
@@ -294,4 +294,25 @@ div.docPreview img {
   border-radius: 16px;
   border: 1px solid #EAE5D4;
   object-fit: cover;
+}
+
+div.delete {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 16px;
+  background: #FFFCF2;
+  border: 2px solid #EAE5D4;
+  border-top-style: none;
+  border-left-style: none;
+}
+
+div.delete img {
+  width: 32px;
+  height: 32px;
 }

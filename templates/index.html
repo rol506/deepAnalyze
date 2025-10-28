@@ -36,6 +36,9 @@
                   </div>
                   <input type="file" name="first" required accept="image/png,image/jpeg" id="first">
                   <img src="" id="previewFirst" class="disabled">
+                  <div class="delete" id="firstDelete">
+                    <img src="{{url_for('static', filename='images/trash.png')}}" alt="Удалить первое изображение">
+                  </div>
                 </div>
               </div>
               <div class="uploadWrapper" id="uploadSecond">
@@ -49,6 +52,9 @@
                   </div>
                   <input type="file" name="second" required accept="image/png,image/jpeg" id="second">
                   <img src="" id="previewSecond" class="disabled">
+                  <div class="delete" id="secondDelete">
+                    <img src="{{url_for('static', filename='images/trash.png')}}" alt="Удалить второе изображение">
+                  </div>
                 </div>
               </div>
             </div>
@@ -77,6 +83,20 @@
       const loader = document.getElementById("loader");
       const invalidFirst = document.getElementById("invalidFirst");
       const invalidSecond = document.getElementById("invalidSecond");
+      const deleteFirst = document.getElementById("firstDelete");
+      const deleteSecond = document.getElementById("secondDelete");
+
+      function deleteFirstFile()
+      {
+        addFirstFile(null);
+        updatePreviewFirst(null);
+      }
+
+      function deleteSecondFile()
+      {
+        addSecondFile(null);
+        updatePreviewSecond(null);
+      }
 
       function clear() {
         form.reset();
@@ -84,6 +104,14 @@
 
       function addFirstFile(file)
       {
+
+        if (file == null)
+        {
+          firstFile = null;
+          uploadBtn.setAttribute("disabled", "");
+          return;
+        }
+
         firstFile = file;
         if (file.type != "image/png" && file.type != "image/jpeg")
         {
@@ -102,6 +130,14 @@
 
       function addSecondFile(file)
       {
+
+        if (file == null)
+        {
+          secondFile = null;
+          uploadBtn.setAttribute("disabled", "");
+          return;
+        }
+
         secondFile = file;
         if (file.type != "image/png" && file.type != "image/jpeg")
         {
@@ -152,10 +188,11 @@
 
       function updatePreviewFirst(file)
       {
-        if (file.type != "image/png" && file.type != "image/jpeg")
+        if (file == null || (file.type != "image/png" && file.type != "image/jpeg"))
         {
           previewFirst.classList.add("disabled");
           labelsFirst.classList.remove("disabled");
+          deleteFirst.style.display = "none";
         } else { 
           let reader = new FileReader();
           reader.readAsDataURL(file);
@@ -165,16 +202,18 @@
             previewFirst.src = imgURL;
             previewFirst.classList.remove("disabled");
             labelsFirst.classList.add("disabled");
+            deleteFirst.style.display = "block";
           }
         }
       }
 
       function updatePreviewSecond(file)
       {
-        if (file.type != "image/png" && file.type != "image/jpeg")
+        if (file == null || (file.type != "image/png" && file.type != "image/jpeg"))
         {
           previewSecond.classList.add("disabled");
           labelsSecond.classList.remove("disabled");
+          deleteSecond.style.display = "none";
         } else { 
           let reader = new FileReader();
           reader.readAsDataURL(file);
@@ -184,6 +223,7 @@
             previewSecond.src = imgURL;
             previewSecond.classList.remove("disabled");
             labelsSecond.classList.add("disabled");
+            deleteSecond.style.display = "block";
           }
         }
       }
@@ -223,6 +263,10 @@
       uploadBtn.setAttribute("disabled", "");
       invalidFirst.style.display = "none";
       invalidSecond.style.display = "none";
+      deleteFirst.style.display = "none";
+      deleteFirst.addEventListener("click", deleteFirstFile);
+      deleteSecond.style.display = "none";
+      deleteSecond.addEventListener("click", deleteSecondFile);
 
       // reload page on browser back
       window.addEventListener( "pageshow", function ( event ) {

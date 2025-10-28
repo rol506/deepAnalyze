@@ -36,12 +36,6 @@ def loadTiles(filename, prefix, e):
     N = 500
     x1 = 0
     y1 = 0
-
-    #if imgheight < M:
-    #    logging.warning("Image height is smaller than a tile height! Undefined behaviour!")
-    #
-    #if imgwidth < N:
-    #    logging.warning("Image width is smaller than a tile width! Undefined behaviour!")
      
     logging.info("Exporting image as tiles")
 
@@ -113,8 +107,8 @@ def processTile(tile):
     img1 = e.loadImage(tile1)
     img2 = e.loadImage(tile2)
 
-    #os.remove(tile1)
-    #os.remove(tile2)
+    os.remove(tile1)
+    os.remove(tile2)
 
     gray1 = e.grayscaleImage(img1)
     gray2 = e.grayscaleImage(img2)
@@ -290,6 +284,7 @@ def processTiles(firstTiles, secondTiles, e, doc: Document):
         bar.finish()
         doc.save("summary.docx")
 
+    logging.info("Making first result image")
 
     img = None
     for ind, tileRow in enumerate(firstTiles):
@@ -307,6 +302,8 @@ def processTiles(firstTiles, secondTiles, e, doc: Document):
             img = row
         else:
             img = np.concatenate((img, row), axis=0)
+    
+    logging.info("Making second result image")
 
     img2 = None
     for ind, tileRow in enumerate(secondTiles):
@@ -366,7 +363,7 @@ def processPair(first, second):
     logging.info(f"Process took {round(end-start, 2)}s")
 
 if __name__ == "__main__":
-    processPair("map1.png", "map2.png")
+    processPair("map1.png", "mapTest.png")
     #processPair("test1.png", "test2.png")
     #e = Engine()
     #img1 = e.loadImage("test_c1.jpg")
