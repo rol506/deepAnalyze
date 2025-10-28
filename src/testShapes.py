@@ -11,7 +11,7 @@ from docx.shared import Inches
 
 DEBUG = True
 
-logging.basicConfig(encoding="utf-8", level=logging.INFO, 
+logging.basicConfig(encoding="utf-8", level=logging.DEBUG, 
                     format="%(levelname)s %(asctime)s %(message)s",
                     handlers=[logging.FileHandler("log.txt", ("w" if DEBUG else "w+")), logging.StreamHandler(sys.stdout)])
 
@@ -73,18 +73,29 @@ def loadTiles(filename, prefix, e):
     x1 = 0
     y1 = 0
 
-    #TODO FIX CASE WHEN IMAGE IS SMALLER THAN A TILE
     if imgheight < M:
-        logging.WARNING("Image height is smaller than a tile height! Undefined behaviour!")
+        logging.warning("Image height is smaller than a tile height! Undefined behaviour!")
     
     if imgwidth < N:
-        logging.WARNING("Image width is smaller than a tile width! Undefined behaviour!")
+        logging.warning("Image width is smaller than a tile width! Undefined behaviour!")
      
     for y in range(0, imgheight, M):
         tileNamesRow = []
         for x in range(0, imgwidth, N):
             if (imgheight - y) < M or (imgwidth - x) < N:
-                break
+                name = 'saved_patches/'+str(prefix)+'_tile'+str(x)+'_'+str(y)+'.jpg'
+                y1 = y+M
+                x1 = x+N
+                if (x1 >= imgwidth):
+                    x1 = imgwidth-1
+
+                if (y1 >= imgheight):
+                    y1 = imgheight-1
+
+                tiles = image_copy[y:y1, x:x1]
+                e.exportImage(tiles, name)
+                tileNamesRow.append(name)
+                continue
                  
             y1 = y + M
             x1 = x + N
@@ -127,7 +138,6 @@ def loadTiles(filename, prefix, e):
     return tileNames
 
 def processTiles(firstTiles, secondTiles, e, doc): 
-    index = 0
     for tileRow1, tileRow2 in zip(firstTiles, secondTiles):
         for tile1, tile2 in zip(tileRow1, tileRow2):
             img1 = e.loadImage(tile1)
@@ -142,8 +152,8 @@ def processTiles(firstTiles, secondTiles, e, doc):
             cont1 = e.findContours(gray1)
             cont2 = e.findContours(gray2)
 
-            r = copy.deepcopy(img1)
-            r2 = copy.deepcopy(img2)
+            #r = copy.deepcopy(img1)
+            #r2 = copy.deepcopy(img2)
 
             # COLOR DIFF
             diff = e.findDiffColors(img1, img2, cont1, cont2)
@@ -152,15 +162,23 @@ def processTiles(firstTiles, secondTiles, e, doc):
             else:
                 logging.debug("Found difference in colors!")
                 for d in diff:
-                    #e.drawContours(r, d[0][0], color=d[1][1])
-                    #e.drawContours(r2, d[0][1], color=d[1][0])
+
+                    print(d)
+                    r = copy.deepcopy(img1)
+                    r2 = copy.deepcopy(img2)
+
+                    e.drawContours(r, [d[0][0]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][0])))
+                    e.drawContours(r2, [d[0][1]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][0])))                    
+
                     doc.add_heading("Найдено различие в цвете")
                     p = doc.add_paragraph()
                     run = p.add_run()
-                    e.exportImage(e.cropToContour(r, d[0][0]), "tmp.jpg")
+                    #e.exportImage(e.cropToContour(r, d[0][0]), "tmp.jpg")
+                    e.exportImage(r, "tmp.jpg")
                     run.add_picture("tmp.jpg", width=Inches(2))
                     run = p.add_run()
-                    e.exportImage(e.cropToContour(r2, d[0][1]), "tmp.jpg")
+                    #e.exportImage(e.cropToContour(r2, d[0][1]), "tmp.jpg")
+                    e.exportImage(r2, "tmp.jpg")
                     run.add_picture("tmp.jpg", width=Inches(2))
                     os.remove("tmp.jpg")
 
@@ -171,11 +189,16 @@ def processTiles(firstTiles, secondTiles, e, doc):
                 return None
             else:
                 logging.debug("Found difference in shapes!")
-                e.drawContours(r, df[0], thickness=-1, color=(0,0,255)) # draw diff contours from other img
-                e.drawContours(r2, df[1], thickness=-1, color=(0,0,255))
+                #e.drawContours(r, df[0], thickness=-1, color=(0,0,255)) # draw diff contours from other img
+                #e.drawContours(r2, df[1], thickness=-1, color=(0,0,255))
                 for c1, c2 in zip(df[0], df[1]):
-                    #e.viewImage(e.cropToContour(r, c1))
-                    #! POSSIBLE DATA RACE
+
+                    r = copy.deepcopy(img1)
+                    r2 = copy.deepcopy(img2)
+
+                    e.drawContours(r, [c1], thickness=e.calculateThickness(e.calculateOffset(c1)), color=(0,0,255))
+                    e.drawContours(r2, [c2], thickness=e.calculateThickness(e.calculateOffset(c2)), color=(0,0,255))
+
                     doc.add_heading("Различие в форме")
                     p = doc.add_paragraph()
                     run = p.add_run()
@@ -185,6 +208,16 @@ def processTiles(firstTiles, secondTiles, e, doc):
                     e.exportImage(e.cropToContour(r2, c2), "tmp.jpg")
                     run.add_picture("tmp.jpg", width=Inches(2))
                     os.remove("tmp.jpg")
+
+            e.drawContours(img1, df[0], thickness=2, color=(0,0,255))
+            e.drawContours(img2, df[1], thickness=2, color=(0,0,255))
+
+            for d in diff:
+                e.drawContours(img1, [d[0][0]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][0])))
+                e.drawContours(img2, [d[0][1]], color=(255,0,0), thickness=e.calculateThickness(e.calculateOffset(d[0][1])))
+
+            e.exportImage(img1, tile1)
+            e.exportImage(img2, tile2)
 
     img = None
     for ind, tileRow in enumerate(firstTiles):
@@ -202,8 +235,26 @@ def processTiles(firstTiles, secondTiles, e, doc):
             img = row
         else:
             img = np.concatenate((img, row), axis=0)
+
+    img2 = None
+    for ind, tileRow in enumerate(secondTiles):
+        row = None
+        for ind2, tile in enumerate(tileRow):
+            tileImg = e.loadImage(tile)
+            os.remove(tile)
+            if ind2 == 0:
+                row = tileImg
+            else:
+                row = np.concatenate((row, tileImg), axis=1)
+        if row is None:
+            break
+        if ind == 0:
+            img2 = row
+        else:
+            img2 = np.concatenate((img2, row), axis=0)
+
     doc.save("summary.docx")
-    return img
+    return img, img2
 
 def processPair(first, second):
     logging.info("Processing pair")
@@ -214,11 +265,23 @@ def processPair(first, second):
     secondTiles = loadTiles(second, "second", e)
 
     start = time.time()
-    img = processTiles(firstTiles, secondTiles, e, doc)
+    img, img2 = processTiles(firstTiles, secondTiles, e, doc)
     if img is None:
-        logging.error("Result image is None! Exporting first image...")
-        e.exportImage(e.loadImage(first), "result.jpg")
+        logging.error("First result image is None! Exporting first image...")
+        e.exportImage(e.loadImage(first), "result1.jpg")
     else:
-        e.exportImage(img, "result.jpg")
+        e.exportImage(img, "result1.jpg")
+
+    if img2 is None:
+        logging.error("Seocnd result image is None! Exporting second image...")
+        e.exportImage(e.loadImage(second), "result2.jpg")
+    else:
+        e.exportImage(img2, "result2.jpg")
     end = time.time()
     logging.info(f"Process took {round(end-start, 2)}s")
+
+if __name__ == "__main__":
+    processPair("test1.png", "test2.png")
+    #e = Engine()
+    #img1 = e.loadImage("test_c1.jpg")
+    #img2 = e.loadImage("test_c2.jpg")

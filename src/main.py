@@ -42,10 +42,17 @@ def resdoc():
     else:
         return abort(403)
 
-@app.route("/resultImg")
-def resimg():
-    if os.path.exists("result.jpg"):
-        return send_file("../result.jpg", as_attachment=True)
+@app.route("/resultImg1")
+def resimg1():
+    if os.path.exists("result1.jpg"):
+        return send_file("../result1.jpg", as_attachment=True)
+    else:
+        return abort(403)
+
+@app.route("/resultImg2")
+def resimg2():
+    if os.path.exists("result2.jpg"):
+        return send_file("../result2.jpg", as_attachment=True)
     else:
         return abort(403)
 

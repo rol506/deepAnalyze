@@ -69,11 +69,12 @@ class Engine:
     # cropps image and changes contours. Returns (image, contours)
     def cropToContour(self, image, contour):
         self.__log.debug("Cropping image to contour")
-        width, height, channels = image.shape
+        width = image.shape[0]
+        height = image.shape[1]
         x, y, w, h = cv.boundingRect(contour)
         x2 = x+w
         y2 = y+h
-        offset = 200 #px
+        offset = self.calculateOffset(contour)
 
         x -= offset
         if x <= 0:
@@ -93,17 +94,33 @@ class Engine:
 
         return image[min(y, y2):max(y, y2), min(x, x2):max(x, x2)]
 
-    def grayscaleImage(self, image, invert=False):
+    def calculateOffset(self, contour):
+        x, y, w, h = cv.boundingRect(contour)
+        offset = 9 * w #px
+        # 10 * widthOfBB = widthOfCropped
+        # offset + widthOfBB + offset = widthOfCropped -> offset = 10 * widthOfBB - widthOfBB -> offset = 9 * widthOfBB
+        return offset
+    
+    def calculateThickness(self, offset):
+        thick = offset // 100 + 1
+        if thick < 1:
+            thick = 1
+
+        if thick > 5:
+            thick = 5
+        return thick
+
+    def grayscaleImage(self, image, invert=True):
         cpy = copy.deepcopy(image)
         self.__log.debug("Grayscaling image")
         img = cv.cvtColor(cpy, cv.COLOR_BGR2GRAY)
-        ret, img = cv.threshold(img, 0, 255, cv.THRESH_OTSU)
+        ret, img = cv.threshold(img, 10, 255, cv.THRESH_OTSU)
 
         # sobel magnitude
-        sx = cv.Sobel(img, cv.CV_32F, 1, 0)
-        sy = cv.Sobel(img, cv.CV_32F, 0, 1)
-        img = cv.magnitude(sx,sy)
-        img = cv.normalize(img, None, 0.0, 255.0, cv.NORM_MINMAX, cv.CV_8U)
+        #sx = cv.Sobel(img, cv.CV_32F, 1, 0)
+        #sy = cv.Sobel(img, cv.CV_32F, 0, 1)
+        #img = cv.magnitude(sx,sy)
+        #img = cv.normalize(img, None, 0.0, 255.0, cv.NORM_MINMAX, cv.CV_8U)
 
         if invert:
             img = cv.bitwise_not(img)
@@ -125,7 +142,7 @@ class Engine:
                 x, y, w, h = cv.boundingRect(i)
                 cv.rectangle(image, (x, y), (x+w, y+h), color ,2)
         else:
-            cv.drawContours(image, contours, -1, color,thickness=thickness)
+            cv.drawContours(image, contours, -1, color=color,thickness=thickness)
 
     def drawDot(self, image, position):
         self.__log.debug("Drawing a dot on the image")
@@ -177,6 +194,6 @@ class Engine:
         for i, j in zip(contours1, contours2):
             c1 = self.getColor(image1, i)
             c2 = self.getColor(image2, j)
-            if c1 != c2:
+            if abs(c1[0] - c2[0]) > 15 or abs(c1[1] - c2[1]) > 15 or abs(c1[2] - c2[2]) > 15:
                 res.append(((i, j), (c1, c2)))
-        return res if len(res) > 1 else None
+        return res if len(res) > 0 else None
