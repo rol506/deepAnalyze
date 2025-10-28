@@ -4,6 +4,11 @@
   font-family: "Raleway", sans-serif;
 }
 
+body {
+  width: 100vw;
+  overflow: hidden;
+}
+
 header {
   width: 100vw;
   height: 20px;
