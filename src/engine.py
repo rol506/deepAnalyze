@@ -114,9 +114,12 @@ class Engine:
         cpy = copy.deepcopy(image)
         self.__log.debug("Grayscaling image")
         img = cv.cvtColor(cpy, cv.COLOR_BGR2GRAY)
-        ret, img = cv.threshold(img, 0, 255, cv.THRESH_OTSU)
+        #frame = cv.GaussianBlur(img, (5, 5), 0)
+        #img = cv.addWeighted(img, 1.5, frame, -0.5, 0)
+        ret, img = cv.threshold(img, 200, 255, cv.THRESH_BINARY)
+        #img = cv.adaptiveThreshold(img, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 11, 1)
 
-        # sobel magnitude
+        ##sobel magnitude
         #sx = cv.Sobel(img, cv.CV_32F, 1, 0)
         #sy = cv.Sobel(img, cv.CV_32F, 0, 1)
         #img = cv.magnitude(sx,sy)
@@ -128,11 +131,11 @@ class Engine:
 
     def findContours(self, image, limit=-1):
         self.__log.debug("Finding contours")
-        contours, hierarchy = cv.findContours(image, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv.findContours(image, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
         #self.__log.debug("Contours found!")
         self.__log.debug(f"Found {len(contours)} contours")
-        if len(contours) > limit and limit > 0:
-            return contours[:limit]
+        #if len(contours) > limit and limit > 0:
+        #    return contours[:limit]
         return contours
 
     def drawContours(self, image, contours, color=(0,0,255), thickness=2, drawBoundingBox=False):

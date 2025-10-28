@@ -51,15 +51,15 @@ def resdoc():
 
 @app.route("/resultImg1")
 def resimg1():
-    if os.path.exists("result1.jpg"):
-        return send_file("../result1.jpg", as_attachment=True)
+    if os.path.exists("result1.png"):
+        return send_file("../result1.png", as_attachment=True)
     else:
         return abort(403)
 
 @app.route("/resultImg2")
 def resimg2():
-    if os.path.exists("result2.jpg"):
-        return send_file("../result2.jpg", as_attachment=True)
+    if os.path.exists("result2.png"):
+        return send_file("../result2.png", as_attachment=True)
     else:
         return abort(403)
 

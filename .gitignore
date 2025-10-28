@@ -4,11 +4,13 @@ lib/
 bin/
 include/
 saved_patches/
+upload/
+queues/
+map1.png
+map2.png
 pyvenv.cfg
 test_c1.jpg
 test_c2.jpg
-test1.png
-test2.png
 summary.docx
 result.jpg
 map.jpg
@@ -17,5 +19,5 @@ log.txt
 mapTest.jpg
 testColors.png
 testShapes.png
-result1.jpg
-result2.jpg
+result1.png
+result2.png
